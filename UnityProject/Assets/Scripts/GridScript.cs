@@ -4,6 +4,7 @@ using System.Collections;
 public class GridScript : MonoBehaviour {
 
 	public float Scale;
+	public float Offset;
 
 	private Mesh mesh;
 	private Vector3[] originalVerts;
@@ -34,14 +35,14 @@ public class GridScript : MonoBehaviour {
 				Vector3 gravInLocalSpace = this.transform.InverseTransformPoint(grav.transform.position);
 				float distance = (gravInLocalSpace - origVertex).magnitude;
 
-				float intermediate = GravityHelper.CalculateGravityForce(distance, 1, grav.rigidbody.mass, _gravityController.GravityConstant, _gravityController.DistanceMultiplier);
-				forceSum += intermediate;
+				float intermediate = GravityHelper.CalculateGravityForce(distance, 1000000, grav.rigidbody.mass, _gravityController.GravityConstant, _gravityController.DistanceMultiplier);
+				forceSum += Mathf.Log (intermediate) / Mathf.Log (50);
 //				forceSum += Mathf.Log (intermediate) / Mathf.Log (1000); 
 			}
 
 			verts[i] = origVertex;
-			verts[i].y -= forceSum * Scale;
-			verts[i].y = Mathf.Clamp(verts[i].y, -100000, 0);
+			verts[i].y -= (forceSum * Scale) - Offset;
+			verts[i].y = Mathf.Clamp(verts[i].y, -100, 0);
 		}
 
 		mesh.vertices = verts;
